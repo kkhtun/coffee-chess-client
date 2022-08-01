@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import app from "../../firebase/firebase";
 
@@ -21,14 +22,23 @@ function Login() {
             console.log(e);
         }
     };
+
     return (
-        <div>
-            <button
+        <div
+            style={{
+                height: `${window.innerHeight / 2}px`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <Button
                 onClick={triggerGoogleSignIn}
-                className="login-with-google-btn"
+                variant="outlined"
+                size="large"
             >
                 Sign In With Google
-            </button>
+            </Button>
         </div>
     );
 }

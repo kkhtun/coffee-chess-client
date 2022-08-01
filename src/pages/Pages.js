@@ -20,6 +20,8 @@ import app from "../firebase/firebase";
 
 // Socket
 import { SocketContext } from "../contexts/socket.context";
+import Header from "../components/Header/Header";
+import { Container } from "@mui/material";
 
 function ProtectedRoute({ auth }) {
     if (!auth) {
@@ -34,7 +36,14 @@ function InverseProtectedRoute({ auth }) {
 }
 
 function AppWrapper() {
-    return <Outlet />;
+    return (
+        <div>
+            <Header />
+            <Container>
+                <Outlet />
+            </Container>
+        </div>
+    );
 }
 
 function Pages() {

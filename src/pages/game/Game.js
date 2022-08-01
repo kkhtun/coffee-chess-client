@@ -4,6 +4,8 @@ import { Chessboard } from "react-chessboard";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
+// ES6 Modules or TypeScript
+import Swal from "sweetalert2";
 
 function Game() {
     const boardWidth = Math.min(window.innerHeight, window.innerWidth) - 100; // -20 as buffer;
@@ -27,7 +29,7 @@ function Game() {
 
     function onDrop(sourceSquare, targetSquare, piece) {
         if (!socket && !game) return false;
-        if (game.turn() !== color) return false;
+        // if (game.turn() !== color) return false;
         let move = null;
         safeGameMutate((game) => {
             move = game.move({
@@ -65,9 +67,12 @@ function Game() {
 
             socket.on("alert:game", ({ message }) => {
                 console.log(message);
-                if (message.includes("Checkmate")) {
-                    return window.alert(message);
-                }
+                Swal.fire({
+                    title: message,
+                    icon: "info",
+                    toast: true,
+                    position: "top",
+                });
             });
 
             socket.on("moved:piece", ({ move, fen }) => {
@@ -83,6 +88,11 @@ function Game() {
         }
         return () => {};
     }, [socket, gameId, auth]);
+
+    useEffect(() => {
+        if (socket && auth.token) {
+        }
+    }, [socket, auth]);
 
     return (
         <div>

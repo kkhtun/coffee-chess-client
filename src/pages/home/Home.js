@@ -1,22 +1,25 @@
+import {
+    Box,
+    Button,
+    Divider,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+    Typography,
+} from "@mui/material";
 import axios from "axios";
-import { getAuth } from "firebase/auth";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
 import { HOST } from "../../environment/environment";
-import app from "../../firebase/firebase";
 function Home() {
     const { auth } = useContext(AuthContext);
     const { socket } = useContext(SocketContext);
     const navigate = useNavigate();
     const [games, setGames] = useState([]);
     const [count, setCount] = useState(0);
-
-    const handleLogout = (e) => {
-        // just a quick workaround for devflow, need to implement more elegant way
-        getAuth(app).signOut();
-    };
 
     const startGame = () => {
         axios
@@ -25,10 +28,6 @@ function Home() {
                 navigate("/game/" + res.data._id);
             })
             .catch(console.error);
-    };
-
-    const enterGame = (_id) => {
-        navigate("/game/" + _id);
     };
 
     useEffect(() => {
@@ -48,25 +47,60 @@ function Home() {
     }, [socket, auth]);
 
     return (
-        <div>
-            Welcome {auth.name}! this is home page
-            <button onClick={handleLogout}>Sign Out</button>
-            <button onClick={startGame}>Create New Game</button>
-            <h4>Games {count || 0}</h4>
-            <ul>
-                {games &&
-                    games.map((g) => (
-                        <li key={g._id}>
-                            <button onClick={() => enterGame(g._id)}>
-                                GameID : {g._id} <br />
-                                Created At : {g.createdAt} <br />
-                                Players : {g.player_one?.name} |
-                                {g.player_two?.name}
-                            </button>
-                        </li>
-                    ))}
-            </ul>
-        </div>
+        <>
+            <Typography style={{ margin: "10px 0px" }} variant="h6">
+                Welcome {auth.name}!<br /> Join a Game or Create a new one.
+            </Typography>
+            <Button onClick={startGame} variant="outlined">
+                Create New Game
+            </Button>
+            <Box
+                sx={{
+                    maxWidth: 360,
+                    margin: "15px 0px",
+                    bgcolor: "background.paper",
+                }}
+            >
+                <Typography>Current Games ({count || 0})</Typography>
+                <List>
+                    {games && games.map((g) => <GameListItem {...g} />)}
+                </List>
+            </Box>
+        </>
+    );
+}
+
+function GameListItem({ _id, player_one, player_two, createdAt }) {
+    const navigate = useNavigate();
+    const enterGame = (_id) => {
+        navigate("/game/" + _id);
+    };
+    return (
+        <>
+            <ListItem>
+                <ListItemText
+                    primary={`Game ID : ${_id}`}
+                    secondary={
+                        <>
+                            <Typography>Created : {createdAt}</Typography>
+                            <Typography>P1 : {player_one?.name}</Typography>
+                            <Typography>P2 : {player_two?.name}</Typography>
+                            <ListItemButton
+                                style={{
+                                    display: "inline-block",
+                                    marginTop: "5px",
+                                }}
+                                onClick={() => enterGame(_id)}
+                                alignItems="center"
+                            >
+                                Enter
+                            </ListItemButton>
+                        </>
+                    }
+                />
+            </ListItem>
+            <Divider component="li" />
+        </>
     );
 }
 export default Home;
