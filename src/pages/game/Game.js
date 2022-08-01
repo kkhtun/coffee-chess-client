@@ -64,6 +64,7 @@ function Game() {
             socket.emit("join:game", { gameId });
 
             socket.on("alert:game", ({ message }) => {
+                console.log(message);
                 if (message.includes("Checkmate")) {
                     return window.alert(message);
                 }
@@ -82,11 +83,6 @@ function Game() {
         }
         return () => {};
     }, [socket, gameId, auth]);
-
-    useEffect(() => {
-        if (socket && auth.token) {
-        }
-    }, [socket, auth]);
 
     return (
         <div>

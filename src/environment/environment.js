@@ -1,2 +1,4 @@
-export const HOST = "http://localhost:8080";
-export const SOCKET_HOST = "http://localhost:8081";
+export const HOST =
+    process.env.REACT_APP_ENV === "development"
+        ? "https://chess-dev.herokuapp.com"
+        : "http://localhost:8080";

@@ -7,7 +7,7 @@ import {
 } from "react-router-dom";
 import { useContext, useEffect } from "react";
 import { io } from "socket.io-client";
-import { SOCKET_HOST } from "../environment/environment";
+import { HOST } from "../environment/environment";
 // Components
 import Login from "./login/Login";
 import Game from "./game/Game";
@@ -50,7 +50,7 @@ function Pages() {
                     name: displayName || "Anonymous",
                 });
                 console.log("Previous token found on storage, set to context");
-                const socket = io(SOCKET_HOST, {
+                const socket = io(HOST, {
                     auth: {
                         token: accessToken,
                     },
