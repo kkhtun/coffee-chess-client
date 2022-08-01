@@ -6,6 +6,8 @@ import {
     Outlet,
 } from "react-router-dom";
 import { useContext, useEffect } from "react";
+import { io } from "socket.io-client";
+import { SOCKET_HOST } from "../environment/environment";
 // Components
 import Login from "./login/Login";
 import Game from "./game/Game";
@@ -15,6 +17,9 @@ import Home from "./home/Home";
 import { getAuth } from "firebase/auth";
 import { AuthContext } from "../contexts/auth.context";
 import app from "../firebase/firebase";
+
+// Socket
+import { SocketContext } from "../contexts/socket.context";
 
 function ProtectedRoute({ auth }) {
     if (!auth) {
@@ -34,6 +39,7 @@ function AppWrapper() {
 
 function Pages() {
     const { auth, setAuth } = useContext(AuthContext);
+    const { setSocket } = useContext(SocketContext);
     useEffect(() => {
         getAuth(app).onIdTokenChanged((user) => {
             const { displayName, email, accessToken } = user || {};
@@ -44,11 +50,19 @@ function Pages() {
                     name: displayName || "Anonymous",
                 });
                 console.log("Previous token found on storage, set to context");
+                const socket = io(SOCKET_HOST, {
+                    auth: {
+                        token: accessToken,
+                    },
+                })
+                    .on("connection", console.log)
+                    .once("connect_error", console.error);
+                setSocket(socket);
             } else {
                 setAuth({});
             }
         });
-    }, [setAuth]);
+    }, [setAuth, setSocket]);
     return (
         <BrowserRouter>
             <Routes>
@@ -58,8 +72,8 @@ function Pages() {
                         element={<ProtectedRoute auth={auth.token} />}
                     >
                         <Route path="" element={<Home />} />
-                        <Route path="game" element={<Game />} />
                     </Route>
+                    <Route path="game/:gameId" element={<Game />} />
 
                     <Route
                         path=""

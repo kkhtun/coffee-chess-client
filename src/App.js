@@ -1,12 +1,16 @@
 import "./App.css";
 import { AuthContextProvider } from "./contexts/auth.context";
 import Pages from "./pages/Pages";
-import { useInterceptor } from "./hooks/token-interceptor.hook";
+import { useInterceptor } from "./hooks/interceptor.hook";
+import { SocketContextProvider } from "./contexts/socket.context";
 
 function App() {
+    useInterceptor();
     return (
         <AuthContextProvider>
-            <Pages />
+            <SocketContextProvider>
+                <Pages />
+            </SocketContextProvider>
         </AuthContextProvider>
     );
 }
