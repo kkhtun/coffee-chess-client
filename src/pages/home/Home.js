@@ -1,13 +1,12 @@
 import {
     Box,
     Button,
-    Divider,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemText,
+    Card,
+    CardActions,
+    CardContent,
     Typography,
 } from "@mui/material";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -48,23 +47,38 @@ function Home() {
 
     return (
         <>
-            <Typography style={{ margin: "10px 0px" }} variant="h6">
-                Welcome {auth.name}!<br /> Join a Game or Create a new one.
-            </Typography>
-            <Button onClick={startGame} variant="outlined">
-                Create New Game
-            </Button>
+            <Box style={{ textAlign: "center" }}>
+                <Typography style={{ margin: "10px 0px" }} variant="h6">
+                    Welcome to Coffee Chess!
+                    <br /> {auth.name}
+                </Typography>
+                <Button
+                    onClick={startGame}
+                    variant="contained"
+                    color="secondary"
+                >
+                    Create New Game
+                </Button>
+            </Box>
             <Box
+                mt={4}
                 sx={{
-                    maxWidth: 360,
-                    margin: "15px 0px",
+                    maxWidth: Math.max(360, window.innerWidth - 10),
+
                     bgcolor: "background.paper",
                 }}
             >
-                <Typography>Current Games ({count || 0})</Typography>
-                <List>
-                    {games && games.map((g) => <GameListItem {...g} />)}
-                </List>
+                <Typography variant="h6">
+                    Current Games ({count || 0})
+                </Typography>
+                <Typography sx={{ fontSize: 12 }} color="text.info" mb={1}>
+                    <InfoOutlinedIcon sx={{ fontSize: 14 }} />
+                    &nbsp;Inactive games will be removed after a few hours
+                </Typography>
+                <Box>
+                    {games &&
+                        games.map((g) => <GameListItem {...g} key={g._id} />)}
+                </Box>
             </Box>
         </>
     );
@@ -76,31 +90,36 @@ function GameListItem({ _id, player_one, player_two, createdAt }) {
         navigate("/game/" + _id);
     };
     return (
-        <>
-            <ListItem>
-                <ListItemText
-                    primary={`Game ID : ${_id}`}
-                    secondary={
-                        <>
-                            <Typography>Created : {createdAt}</Typography>
-                            <Typography>P1 : {player_one?.name}</Typography>
-                            <Typography>P2 : {player_two?.name}</Typography>
-                            <ListItemButton
-                                style={{
-                                    display: "inline-block",
-                                    marginTop: "5px",
-                                }}
-                                onClick={() => enterGame(_id)}
-                                alignItems="center"
-                            >
-                                Enter
-                            </ListItemButton>
-                        </>
-                    }
-                />
-            </ListItem>
-            <Divider component="li" />
-        </>
+        <Card raised={true} style={{ marginBottom: "10px" }}>
+            <CardContent>
+                <Typography variant="h6" component="div">
+                    ID:{_id}
+                </Typography>
+                <Typography
+                    sx={{ fontSize: 14 }}
+                    color="text.secondary"
+                    gutterBottom
+                >
+                    Created At : {createdAt}
+                </Typography>
+                <Typography sx={{ fontSize: 12 }} color="text.secondary" mt={1}>
+                    Players :
+                </Typography>
+                <Typography variant="body2">
+                    {player_one?.name} | {player_two?.name}
+                </Typography>
+            </CardContent>
+            <CardActions style={{ padding: "16px" }}>
+                <Button
+                    size="small"
+                    variant="outlined"
+                    onClick={() => enterGame(_id)}
+                    style={{ marginLeft: "auto" }}
+                >
+                    Enter Game
+                </Button>
+            </CardActions>
+        </Card>
     );
 }
 export default Home;

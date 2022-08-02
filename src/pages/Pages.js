@@ -4,8 +4,9 @@ import {
     Route,
     Navigate,
     Outlet,
+    useLocation,
 } from "react-router-dom";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { HOST } from "../environment/environment";
 // Components
@@ -22,6 +23,8 @@ import app from "../firebase/firebase";
 import { SocketContext } from "../contexts/socket.context";
 import Header from "../components/Header/Header";
 import { Container } from "@mui/material";
+import Drawer from "../components/Drawer/Drawer";
+import Footer from "../components/Footer/Footer";
 
 function ProtectedRoute({ auth }) {
     if (!auth) {
@@ -36,12 +39,19 @@ function InverseProtectedRoute({ auth }) {
 }
 
 function AppWrapper() {
+    const { pathname } = useLocation();
+    const [drawerOpen, setDrawerOpen] = useState(false);
     return (
         <div>
-            <Header />
-            <Container>
+            <Header setDrawerOpen={setDrawerOpen} />
+            <Drawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
+            <Container
+                maxWidth={pathname.includes("game") ? "md" : "xs"}
+                style={{ minHeight: window.innerHeight - 200 }}
+            >
                 <Outlet />
             </Container>
+            <Footer />
         </div>
     );
 }

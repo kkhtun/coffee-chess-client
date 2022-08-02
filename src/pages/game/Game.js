@@ -6,15 +6,17 @@ import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
 // ES6 Modules or TypeScript
 import Swal from "sweetalert2";
+import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
 
 function Game() {
-    const boardWidth = Math.min(window.innerHeight, window.innerWidth) - 100; // -20 as buffer;
+    const boardWidth = Math.min(500, window.innerWidth) - 40; // -20 as buffer;
     const { gameId } = useParams();
 
     const [game, setGame] = useState(new Chess());
     const [playerOne, setPlayerOne] = useState(null);
     const [playerTwo, setPlayerTwo] = useState(null);
     const [color, setColor] = useState(""); // this is your color
+    const [orientation, setOrientation] = useState("w"); // vertically you will be playing from bottom
 
     const { socket } = useContext(SocketContext);
     const { auth } = useContext(AuthContext);
@@ -29,7 +31,7 @@ function Game() {
 
     function onDrop(sourceSquare, targetSquare, piece) {
         if (!socket && !game) return false;
-        // if (game.turn() !== color) return false;
+        if (game.turn() !== color) return false;
         let move = null;
         safeGameMutate((game) => {
             move = game.move({
@@ -50,6 +52,15 @@ function Game() {
         return true;
     }
 
+    function fireAlert(message) {
+        Swal.fire({
+            title: message,
+            icon: "info",
+            toast: true,
+            position: "top",
+        });
+    }
+
     useEffect(() => {
         if (gameId && auth.token && socket) {
             socket.on("joined:game", (joinedGame) => {
@@ -57,22 +68,19 @@ function Game() {
                 setTimeout(() => {
                     safeGameMutate((game) => {
                         game.load(fen);
+                        if (game.game_over()) return fireAlert("Checkmate!");
                     });
                 }, 300);
                 setPlayerOne(player_one);
                 setPlayerTwo(player_two);
                 setColor(color);
+                setOrientation(!color || color === "w" ? "w" : "b");
             });
             socket.emit("join:game", { gameId });
 
             socket.on("alert:game", ({ message }) => {
                 console.log(message);
-                Swal.fire({
-                    title: message,
-                    icon: "info",
-                    toast: true,
-                    position: "top",
-                });
+                fireAlert(message);
             });
 
             socket.on("moved:piece", ({ move, fen }) => {
@@ -89,26 +97,65 @@ function Game() {
         return () => {};
     }, [socket, gameId, auth]);
 
-    useEffect(() => {
-        if (socket && auth.token) {
-        }
-    }, [socket, auth]);
-
     return (
-        <div>
-            <span>
-                Player One: {playerOne ? playerOne.name : ""} <br />
-                Player Two: {playerTwo ? playerTwo.name : ""} <br />
-                Turn : {game.turn()} | {color ? `Your Color is ${color}` : ""}
-            </span>
+        <Box
+            style={{
+                margin: "10px 0",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+            }}
+        >
+            <PlayerCard
+                width={boardWidth}
+                player={orientation === "w" ? playerTwo : playerOne}
+                contentStyle={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                }}
+            />
             <Chessboard
                 id="chessboard"
-                boardOrientation={!color || color === "w" ? "white" : "black"}
+                boardOrientation={orientation === "w" ? "white" : "black"}
                 boardWidth={boardWidth}
                 position={game.fen()}
                 onPieceDrop={onDrop}
             />
-        </div>
+            <PlayerCard
+                width={boardWidth}
+                player={orientation === "w" ? playerOne : playerTwo}
+                contentStyle={{
+                    display: "flex",
+                    flexDirection: "row-reverse",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                }}
+                turn={game.turn()}
+            />
+        </Box>
     );
 }
 export default Game;
+
+function PlayerCard({ width, player, contentStyle, turn }) {
+    return (
+        <Card style={{ width }}>
+            <CardContent style={{ ...contentStyle }}>
+                <Typography>{player ? player.name : ""}</Typography>
+                <Box style={{ display: "flex", alignItems: "center" }}>
+                    {turn && (
+                        <Chip
+                            label={
+                                turn === "w"
+                                    ? "White is to move"
+                                    : "Black is to move"
+                            }
+                            variant={turn === "w" ? "contained" : "outlined"}
+                            size="small"
+                        />
+                    )}
+                </Box>
+            </CardContent>
+        </Card>
+    );
+}
