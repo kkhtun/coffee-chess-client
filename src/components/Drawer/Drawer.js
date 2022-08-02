@@ -54,24 +54,30 @@ function Drawer({ drawerOpen, setDrawerOpen }) {
                 onKeyDown={() => setDrawerOpen(false)}
             >
                 <List>
-                    <ListItem key="New Game" disablePadding>
-                        <ListItemButton onClick={startGame}>
-                            <ListItemText primary="New Game" />
-                        </ListItemButton>
-                    </ListItem>
-                    <ListItem key="Home" disablePadding>
-                        <ListItemButton onClick={() => navigate("/")}>
-                            <ListItemText primary="Home" />
-                        </ListItemButton>
-                    </ListItem>
                     {auth.token ? (
-                        <ListItem key="Logout" disablePadding>
-                            <ListItemButton onClick={handleLogout}>
-                                <ListItemText primary="Logout" />
+                        <>
+                            <ListItem key="New Game" disablePadding>
+                                <ListItemButton onClick={startGame}>
+                                    <ListItemText primary="New Game" />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem key="Home" disablePadding>
+                                <ListItemButton onClick={() => navigate("/")}>
+                                    <ListItemText primary="Home" />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem key="Logout" disablePadding>
+                                <ListItemButton onClick={handleLogout}>
+                                    <ListItemText primary="Logout" />
+                                </ListItemButton>
+                            </ListItem>
+                        </>
+                    ) : (
+                        <ListItem key="Login" disablePadding>
+                            <ListItemButton onClick={() => navigate("/login")}>
+                                <ListItemText primary="Login" />
                             </ListItemButton>
                         </ListItem>
-                    ) : (
-                        <></>
                     )}
                 </List>
             </Box>
