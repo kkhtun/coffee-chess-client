@@ -110,11 +110,11 @@ function Home() {
                     <InfoOutlinedIcon sx={{ fontSize: 14 }} />
                     &nbsp;Inactive games will be removed after a few hours
                 </Typography>
-                <Loader loading={loading} />
                 <Box>
                     {games &&
                         games.map((g) => <GameListItem {...g} key={g._id} />)}
                 </Box>
+                <Loader loading={loading} />
                 <Pagination
                     count={Math.ceil(count / limit)}
                     variant="outlined"
