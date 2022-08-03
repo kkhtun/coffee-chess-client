@@ -13,12 +13,14 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
 import { HOST } from "../../environment/environment";
+import Loader from "../../components/Loader/Loader";
 function Home() {
     const { auth } = useContext(AuthContext);
     const { socket } = useContext(SocketContext);
     const navigate = useNavigate();
     const [games, setGames] = useState([]);
     const [count, setCount] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     const startGame = () => {
         axios
@@ -30,11 +32,13 @@ function Home() {
     };
 
     useEffect(() => {
+        setLoading(true);
         axios
             .get(`${HOST}/api/v1/games`)
             .then(({ data }) => {
                 setGames(data.data);
                 setCount(data.count);
+                setLoading(false);
             })
             .catch(console.error);
     }, []);
@@ -75,6 +79,7 @@ function Home() {
                     <InfoOutlinedIcon sx={{ fontSize: 14 }} />
                     &nbsp;Inactive games will be removed after a few hours
                 </Typography>
+                <Loader loading={loading} />
                 <Box>
                     {games &&
                         games.map((g) => <GameListItem {...g} key={g._id} />)}
