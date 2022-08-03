@@ -14,16 +14,34 @@ import { HOST } from "../../environment/environment";
 import { getAuth } from "firebase/auth";
 import app from "../../firebase/firebase";
 import { AuthContext } from "../../contexts/auth.context";
+import { fireAlert } from "../../helpers/alerts";
 
 function Drawer({ drawerOpen, setDrawerOpen }) {
     const navigate = useNavigate();
     const { socket } = useContext(SocketContext);
     const { auth } = useContext(AuthContext);
+
     const startGame = () => {
         axios
             .post(`${HOST}/api/v1/games`, {})
             .then((res) => {
                 navigate("/game/" + res.data._id);
+            })
+            .catch(console.error);
+    };
+
+    const joinRandom = () => {
+        axios
+            .get(`${HOST}/api/v1/games/random`)
+            .then(({ data }) => {
+                if (!data) {
+                    fireAlert(
+                        `There are no joinable games at the moment. \n 
+                        Please create a new game or try again later`
+                    );
+                } else {
+                    navigate("/game/" + data._id);
+                }
             })
             .catch(console.error);
     };
@@ -55,13 +73,6 @@ function Drawer({ drawerOpen, setDrawerOpen }) {
             >
                 <List>
                     {auth.token && (
-                        <ListItem key="New Game" disablePadding>
-                            <ListItemButton onClick={startGame}>
-                                <ListItemText primary="New Game" />
-                            </ListItemButton>
-                        </ListItem>
-                    )}
-                    {auth.token && (
                         <ListItem key="Home" disablePadding>
                             <ListItemButton onClick={() => navigate("/")}>
                                 <ListItemText primary="Home" />
@@ -69,12 +80,24 @@ function Drawer({ drawerOpen, setDrawerOpen }) {
                         </ListItem>
                     )}
                     {auth.token && (
-                        <ListItem key="About" disablePadding>
-                            <ListItemButton onClick={() => navigate("/about")}>
-                                <ListItemText primary="About" />
+                        <ListItem key="New Game" disablePadding>
+                            <ListItemButton onClick={startGame}>
+                                <ListItemText primary="New Game" />
                             </ListItemButton>
                         </ListItem>
                     )}
+                    {auth.token && (
+                        <ListItem key="Join Random" disablePadding>
+                            <ListItemButton onClick={joinRandom}>
+                                <ListItemText primary="Join Random" />
+                            </ListItemButton>
+                        </ListItem>
+                    )}
+                    <ListItem key="About" disablePadding>
+                        <ListItemButton onClick={() => navigate("/about")}>
+                            <ListItemText primary="About" />
+                        </ListItemButton>
+                    </ListItem>
                     {auth.token && (
                         <ListItem key="Logout" disablePadding>
                             <ListItemButton onClick={handleLogout}>

@@ -14,6 +14,7 @@ import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
 import { HOST } from "../../environment/environment";
 import Loader from "../../components/Loader/Loader";
+import { fireAlert } from "../../helpers/alerts";
 function Home() {
     const { auth } = useContext(AuthContext);
     const { socket } = useContext(SocketContext);
@@ -22,11 +23,27 @@ function Home() {
     const [count, setCount] = useState(0);
     const [loading, setLoading] = useState(false);
 
-    const startGame = () => {
+    const createNewGame = () => {
         axios
             .post(`${HOST}/api/v1/games`, {})
             .then((res) => {
                 navigate("/game/" + res.data._id);
+            })
+            .catch(console.error);
+    };
+
+    const joinRandom = () => {
+        axios
+            .get(`${HOST}/api/v1/games/random`)
+            .then(({ data }) => {
+                if (!data) {
+                    fireAlert(
+                        `There are no joinable games at the moment. \n 
+                        Please create a new game or try again later`
+                    );
+                } else {
+                    navigate("/game/" + data._id);
+                }
             })
             .catch(console.error);
     };
@@ -57,7 +74,15 @@ function Home() {
                     <br /> {auth.name}
                 </Typography>
                 <Button
-                    onClick={startGame}
+                    onClick={joinRandom}
+                    variant="outlined"
+                    color="info"
+                    sx={{ marginRight: "5px" }}
+                >
+                    Join Random
+                </Button>
+                <Button
+                    onClick={createNewGame}
                     variant="contained"
                     color="secondary"
                 >

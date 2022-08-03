@@ -4,9 +4,8 @@ import { Chessboard } from "react-chessboard";
 import { useParams } from "react-router-dom";
 import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
-// ES6 Modules or TypeScript
-import Swal from "sweetalert2";
 import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
+import { fireAlert } from "../../helpers/alerts";
 
 function Game() {
     const boardWidth = Math.min(500, window.innerWidth) - 40; // -20 as buffer;
@@ -52,15 +51,6 @@ function Game() {
         return true;
     }
 
-    function fireAlert(message) {
-        Swal.fire({
-            title: message,
-            icon: "info",
-            toast: true,
-            position: "top",
-        });
-    }
-
     useEffect(() => {
         if (gameId && auth.token && socket) {
             socket.on("joined:game", (joinedGame) => {
@@ -68,7 +58,12 @@ function Game() {
                 setTimeout(() => {
                     safeGameMutate((game) => {
                         game.load(fen);
-                        if (game.game_over()) return fireAlert("Checkmate!");
+                        if (game.game_over())
+                            return fireAlert(
+                                `Checkmate! ${
+                                    game.turn() === "w" ? "Black" : "White"
+                                } won the match`
+                            );
                     });
                 }, 300);
                 setPlayerOne(player_one);

@@ -23,6 +23,15 @@ function About() {
                 <ListSubheader>Please note</ListSubheader>
                 <ListItem>
                     <ListItemText>
+                        You can either <strong>create or join a game</strong>.
+                        If you create a game, you will be assigned player one
+                        (white pieces) automatically. If you join a game created
+                        by other player, you will be assigned player two (black
+                        pieces).
+                    </ListItemText>
+                </ListItem>
+                <ListItem>
+                    <ListItemText>
                         Matches will be <strong>deleted in a few hours </strong>
                         if inactive or completed.
                     </ListItemText>
