@@ -4,6 +4,7 @@ import {
     Card,
     CardActions,
     CardContent,
+    Pagination,
     Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -19,9 +20,12 @@ function Home() {
     const { auth } = useContext(AuthContext);
     const { socket } = useContext(SocketContext);
     const navigate = useNavigate();
+
     const [games, setGames] = useState([]);
     const [count, setCount] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(1);
+    const limit = 10;
 
     const createNewGame = () => {
         axios
@@ -51,14 +55,16 @@ function Home() {
     useEffect(() => {
         setLoading(true);
         axios
-            .get(`${HOST}/api/v1/games`)
+            .get(
+                `${HOST}/api/v1/games?skip=${(page - 1) * limit}&limit=${limit}`
+            )
             .then(({ data }) => {
                 setGames(data.data);
                 setCount(data.count);
                 setLoading(false);
             })
             .catch(console.error);
-    }, []);
+    }, [page, limit]);
 
     useEffect(() => {
         if (auth && socket) {
@@ -109,6 +115,13 @@ function Home() {
                     {games &&
                         games.map((g) => <GameListItem {...g} key={g._id} />)}
                 </Box>
+                <Pagination
+                    count={Math.ceil(count / limit)}
+                    variant="outlined"
+                    shape="rounded"
+                    onChange={(e, p) => setPage(p)}
+                    page={page}
+                />
             </Box>
         </>
     );
