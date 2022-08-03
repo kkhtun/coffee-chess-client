@@ -25,6 +25,7 @@ import Header from "../components/Header/Header";
 import { Container } from "@mui/material";
 import Drawer from "../components/Drawer/Drawer";
 import Footer from "../components/Footer/Footer";
+import About from "./about/About";
 
 function ProtectedRoute({ auth }) {
     if (!auth) {
@@ -100,6 +101,7 @@ function Pages() {
                     >
                         <Route path="login" element={<Login />} />
                     </Route>
+                    <Route path="about" element={<About />} />
                 </Route>
             </Routes>
         </BrowserRouter>

@@ -2,6 +2,7 @@ import { Box, Typography, useTheme } from "@mui/material";
 
 function Footer() {
     const theme = useTheme();
+
     return (
         <Box
             mt={4}
