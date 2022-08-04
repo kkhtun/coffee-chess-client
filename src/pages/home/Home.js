@@ -18,7 +18,10 @@ import { SocketContext } from "../../contexts/socket.context";
 import { HOST } from "../../environment/environment";
 import Loader from "../../components/Loader/Loader";
 import { fireAlert } from "../../helpers/alerts";
-import { formatDateTime } from "../../helpers/datetime";
+import {
+    formatDateTime,
+    getTimestampFromMongoId,
+} from "../../helpers/datetime";
 function Home() {
     const { auth } = useContext(AuthContext);
     const { socket } = useContext(SocketContext);
@@ -151,7 +154,7 @@ function GameListItem({ _id, player_one, player_two, createdAt }) {
         <Card raised={true} style={{ marginBottom: "10px" }}>
             <CardContent>
                 <Typography variant="h6" component="div">
-                    ID:{_id}
+                    GameID:{getTimestampFromMongoId(_id)}
                 </Typography>
                 <Typography
                     sx={{ fontSize: 14 }}

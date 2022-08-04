@@ -5,3 +5,7 @@ export function formatDateTime(ISOString) {
     }
     return "A long time ago, in a galaxy far far away";
 }
+
+export function getTimestampFromMongoId(mongoIdString) {
+    return parseInt(mongoIdString.substring(0, 8), 16);
+}
