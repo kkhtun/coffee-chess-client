@@ -9,7 +9,7 @@ import {
 function About() {
     return (
         <>
-            <Typography variant="h6" mt={2} sx={{ textAlign: "center" }}>
+            <Typography variant="h6" mt={3} sx={{ textAlign: "center" }}>
                 About Coffee Chess
             </Typography>
             <List>
