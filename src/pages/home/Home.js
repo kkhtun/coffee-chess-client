@@ -18,6 +18,7 @@ import { SocketContext } from "../../contexts/socket.context";
 import { HOST } from "../../environment/environment";
 import Loader from "../../components/Loader/Loader";
 import { fireAlert } from "../../helpers/alerts";
+import { formatDateTime } from "../../helpers/datetime";
 function Home() {
     const { auth } = useContext(AuthContext);
     const { socket } = useContext(SocketContext);
@@ -157,7 +158,7 @@ function GameListItem({ _id, player_one, player_two, createdAt }) {
                     color="text.secondary"
                     gutterBottom
                 >
-                    Created At : {createdAt}
+                    Created - {formatDateTime(createdAt)}
                 </Typography>
                 <Typography sx={{ fontSize: 12 }} color="text.secondary" mt={1}>
                     Players :

@@ -13,6 +13,7 @@
         "axios": "^0.27.2",
         "chess.js": "^0.13.4",
         "firebase": "^9.9.1",
+        "moment": "^2.29.4",
         "react": "^18.2.0",
         "react-chessboard": "^1.2.6",
         "react-dom": "^18.2.0",
