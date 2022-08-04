@@ -84,7 +84,7 @@ function Home() {
     return (
         <>
             <Box style={{ textAlign: "center" }}>
-                <Typography style={{ margin: "10px 0px" }} variant="h6">
+                <Typography my={2} variant="h6">
                     Welcome to Coffee Chess!
                     <br /> {auth.name}
                 </Typography>
