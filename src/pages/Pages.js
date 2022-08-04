@@ -22,7 +22,7 @@ import app from "../firebase/firebase";
 // Socket
 import { SocketContext } from "../contexts/socket.context";
 import Header from "../components/Header/Header";
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import Drawer from "../components/Drawer/Drawer";
 import Footer from "../components/Footer/Footer";
 import About from "./about/About";
@@ -43,7 +43,13 @@ function AppWrapper() {
     const { pathname } = useLocation();
     const [drawerOpen, setDrawerOpen] = useState(false);
     return (
-        <div>
+        <Box
+            sx={{
+                minHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
+            }}
+        >
             <Header setDrawerOpen={setDrawerOpen} />
             <Drawer drawerOpen={drawerOpen} setDrawerOpen={setDrawerOpen} />
             <Container
@@ -53,7 +59,7 @@ function AppWrapper() {
                 <Outlet />
             </Container>
             <Footer />
-        </div>
+        </Box>
     );
 }
 
