@@ -62,9 +62,10 @@ function Pages() {
     const { setSocket } = useContext(SocketContext);
     useEffect(() => {
         getAuth(app).onIdTokenChanged((user) => {
-            const { displayName, email, accessToken } = user || {};
+            const { displayName, email, accessToken, photoURL } = user || {};
             if (accessToken) {
                 setAuth({
+                    photoURL,
                     token: accessToken,
                     email,
                     name: displayName || "Anonymous",
