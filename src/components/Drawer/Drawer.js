@@ -9,16 +9,12 @@ import {
 import axios from "axios";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { SocketContext } from "../../contexts/socket.context";
 import { HOST } from "../../environment/environment";
-import { getAuth } from "firebase/auth";
-import app from "../../firebase/firebase";
 import { AuthContext } from "../../contexts/auth.context";
 import { fireAlert } from "../../helpers/alerts";
 
 function Drawer({ drawerOpen, setDrawerOpen }) {
     const navigate = useNavigate();
-    const { socket } = useContext(SocketContext);
     const { auth } = useContext(AuthContext);
 
     const startGame = () => {
@@ -46,17 +42,6 @@ function Drawer({ drawerOpen, setDrawerOpen }) {
             .catch(console.error);
     };
 
-    const handleLogout = async (e) => {
-        // just a quick workaround for logout flow, need to implement more elegant way
-        if (socket) {
-            socket.disconnect();
-        }
-        getAuth(app)
-            .signOut()
-            .then(() => {
-                navigate("/login");
-            });
-    };
     return (
         <SwipeableDrawer
             open={drawerOpen}
@@ -98,13 +83,6 @@ function Drawer({ drawerOpen, setDrawerOpen }) {
                             <ListItemText primary="About" />
                         </ListItemButton>
                     </ListItem>
-                    {auth.token && (
-                        <ListItem key="Logout" disablePadding>
-                            <ListItemButton onClick={handleLogout}>
-                                <ListItemText primary="Logout" />
-                            </ListItemButton>
-                        </ListItem>
-                    )}
                     {!auth.token && (
                         <ListItem key="Login" disablePadding>
                             <ListItemButton onClick={() => navigate("/login")}>

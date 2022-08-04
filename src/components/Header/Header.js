@@ -46,15 +46,17 @@ function Header({ setDrawerOpen }) {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <Typography
-                        variant="h6"
-                        component="div"
-                        sx={{ flexGrow: 1 }}
-                        style={{ cursor: "pointer" }}
-                        onClick={() => navigate("/")}
-                    >
-                        Coffee Chess
-                    </Typography>
+                    <Box sx={{ flexGrow: 1 }}>
+                        <Typography
+                            variant="h6"
+                            component="div"
+                            sx={{ display: "inline" }}
+                            style={{ cursor: "pointer" }}
+                            onClick={() => navigate("/")}
+                        >
+                            Coffee Chess
+                        </Typography>
+                    </Box>
                     {auth.token ? (
                         <Box>
                             <Tooltip title={auth.name || auth.email}>
@@ -80,7 +82,7 @@ function Header({ setDrawerOpen }) {
                                 onClose={() => setAnchorEl(null)}
                             >
                                 <MenuItem onClick={handleLogout}>
-                                    Logout
+                                    &nbsp;&nbsp;&nbsp;Logout&nbsp;&nbsp;&nbsp;
                                 </MenuItem>
                             </Menu>
                         </Box>
