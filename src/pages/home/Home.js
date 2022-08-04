@@ -4,7 +4,9 @@ import {
     Card,
     CardActions,
     CardContent,
+    FormControlLabel,
     Pagination,
+    Switch,
     Typography,
 } from "@mui/material";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
@@ -26,6 +28,7 @@ function Home() {
     const [loading, setLoading] = useState(false);
     const [page, setPage] = useState(1);
     const limit = 10;
+    const [showMyGames, setShowMyGames] = useState(false);
 
     const createNewGame = () => {
         axios
@@ -56,7 +59,9 @@ function Home() {
         setLoading(true);
         axios
             .get(
-                `${HOST}/api/v1/games?skip=${(page - 1) * limit}&limit=${limit}`
+                `${HOST}/api/v1/games?skip=${
+                    (page - 1) * limit
+                }&limit=${limit}${showMyGames ? "&my_games=true" : ""}`
             )
             .then(({ data }) => {
                 setGames(data.data);
@@ -64,7 +69,7 @@ function Home() {
                 setLoading(false);
             })
             .catch(console.error);
-    }, [page, limit]);
+    }, [page, limit, showMyGames]);
 
     useEffect(() => {
         if (auth && socket) {
@@ -110,6 +115,15 @@ function Home() {
                     <InfoOutlinedIcon sx={{ fontSize: 14 }} />
                     &nbsp;Inactive games will be removed after a few hours
                 </Typography>
+                <FormControlLabel
+                    sx={{ marginBottom: "10px" }}
+                    control={
+                        <Switch
+                            onChange={(e) => setShowMyGames(e.target.checked)}
+                        />
+                    }
+                    label="Only Games I'm in"
+                />
                 <Box>
                     {games &&
                         games.map((g) => <GameListItem {...g} key={g._id} />)}
