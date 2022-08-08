@@ -6,7 +6,7 @@ import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
 import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
 import { fireAlert } from "../../helpers/alerts";
-import { checkGameEndings } from "../../helpers/game";
+import { checkGameEndings, getPlayerColor } from "../../helpers/game";
 
 function Game() {
     const boardWidth = Math.min(500, window.innerWidth) - 40; // -20 as buffer;
@@ -58,7 +58,7 @@ function Game() {
     useEffect(() => {
         if (gameId && auth.token && socket) {
             socket.on("joined:game", (joinedGame) => {
-                const { pgn, player_one, player_two, color } = joinedGame;
+                const { pgn, player_one, player_two } = joinedGame;
                 setTimeout(() => {
                     safeGameMutate((game) => {
                         game.load_pgn(pgn);
@@ -70,8 +70,13 @@ function Game() {
                 }, 300);
                 setPlayerOne(player_one);
                 setPlayerTwo(player_two);
-                setColor(color);
-                setOrientation(!color || color === "w" ? "w" : "b");
+                const playerColor = getPlayerColor(
+                    player_one?.email,
+                    player_two?.email,
+                    auth.email
+                );
+                setColor(playerColor);
+                setOrientation(!playerColor || playerColor === "w" ? "w" : "b");
             });
             socket.emit("join:game", { gameId });
 

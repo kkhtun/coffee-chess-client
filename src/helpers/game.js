@@ -14,3 +14,14 @@ export function checkGameEndings(game, currentTurn) {
         return `Game Over!`;
     }
 }
+
+// current cannot check DB ID so email will be used temporarily
+export function getPlayerColor(playerOneEmail, playerTwoEmail, currentEmail) {
+    if (currentEmail === playerOneEmail) {
+        return "w";
+    } else if (currentEmail === playerTwoEmail) {
+        return "b";
+    } else {
+        return "";
+    }
+}
