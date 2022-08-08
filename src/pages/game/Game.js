@@ -6,6 +6,7 @@ import { AuthContext } from "../../contexts/auth.context";
 import { SocketContext } from "../../contexts/socket.context";
 import { Box, Card, CardContent, Chip, Typography } from "@mui/material";
 import { fireAlert } from "../../helpers/alerts";
+import { checkGameEndings } from "../../helpers/game";
 
 function Game() {
     const boardWidth = Math.min(500, window.innerWidth) - 40; // -20 as buffer;
@@ -46,7 +47,10 @@ function Game() {
             gameId,
             move,
             fen: game.fen(),
-            gameOver: game.game_over(),
+            pgn: game.pgn(),
+            containsGameOverMessage: game.game_over()
+                ? checkGameEndings(game, game.turn())
+                : false,
         });
         return true;
     }
@@ -54,15 +58,13 @@ function Game() {
     useEffect(() => {
         if (gameId && auth.token && socket) {
             socket.on("joined:game", (joinedGame) => {
-                const { fen, player_one, player_two, color } = joinedGame;
+                const { pgn, player_one, player_two, color } = joinedGame;
                 setTimeout(() => {
                     safeGameMutate((game) => {
-                        game.load(fen);
+                        game.load_pgn(pgn);
                         if (game.game_over())
                             return fireAlert(
-                                `Checkmate! ${
-                                    game.turn() === "w" ? "Black" : "White"
-                                } won the match`
+                                checkGameEndings(game, game.turn())
                             );
                     });
                 }, 300);
@@ -75,17 +77,17 @@ function Game() {
 
             socket.on("alert:game", ({ message }) => {
                 console.log(message);
-                fireAlert(message);
+                fireAlert(message.replace(auth.name, "You"));
             });
 
-            socket.on("moved:piece", ({ move, fen }) => {
+            socket.on("moved:piece", ({ pgn }) => {
                 safeGameMutate((game) => {
-                    game.load(fen);
+                    game.load_pgn(pgn);
                 });
             });
-            socket.on("moved:invalid", ({ move, fen }) => {
+            socket.on("moved:invalid", ({ pgn }) => {
                 safeGameMutate((game) => {
-                    game.load(fen);
+                    game.load_pgn(pgn);
                 });
             });
         }
